@@ -103,10 +103,16 @@ class Batch implements BatchInterface
                         $value = (is_null($val[$field]) ? 'NULL' : $finalField);
                     }
 
-                    if (Common::disableBacktick($driver))
+                    if (Common::disableBacktick($driver)) {
                         $final[$field][] = 'WHEN ' . $index . ' = \'' . $val[$index] . '\' THEN ' . $value . ' ';
-                    else
-                        $final[$field][] = 'WHEN `' . $index . '` = \'' . $val[$index] . '\' THEN ' . $value . ' ';
+                    }
+                    else{
+                        if ($field=='updated_at' || $field=='created_at') {
+                            $final[$field][] = 'WHEN `' . $index . '` = \'' . $val[$index] . '\' THEN \'' . $value . '\' ';
+                        }else {
+                            $final[$field][] = 'WHEN `' . $index . '` = \'' . $val[$index] . '\' THEN ' . $value . ' ';
+                        }
+                    }
                 }
             }
         }
